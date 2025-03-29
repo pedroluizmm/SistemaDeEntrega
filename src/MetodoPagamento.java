@@ -1,3 +1,3 @@
 public interface MetodoPagamento {
-  boolean processar(float valor);
+  boolean realizarPagamento(float valor, String nomeCliente);
 }

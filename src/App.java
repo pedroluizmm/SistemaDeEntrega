@@ -20,14 +20,9 @@ public class App {
                 String opcao = scanner.nextLine();
 
                 switch (opcao) {
-                    case "1":
-                        cadastrar();
-                        break;
-                    case "2":
-                        executando = false;
-                        break;
-                    default:
-                        System.out.println("Opção inválida.");
+                    case "1" -> cadastrar();
+                    case "2" -> executando = false;
+                    default -> System.out.println("Opção inválida.");
                 }
             } else {
                 System.out.println("===== Menu Principal =====");
@@ -39,27 +34,15 @@ public class App {
                 String opcao = scanner.nextLine();
 
                 switch (opcao) {
-                    case "1":
-                        cadastrar();
-                        break;
-                    case "2":
-                        listarClientes();
-                        break;
-                    case "3":
-                        listarEstabelecimentos();
-                        break;
-                    case "4":
-                        listarEntregadores();
-                        break;
-                    case "5":
-                        executando = false;
-                        break;
-                    default:
-                        System.out.println("Opção inválida.");
+                    case "1" -> cadastrar();
+                    case "2" -> listarClientes();
+                    case "3" -> listarEstabelecimentos();
+                    case "4" -> listarEntregadores();
+                    case "5" -> executando = false;
+                    default -> System.out.println("Opção inválida.");
                 }
             }
         }
-
         scanner.close();
     }
 
@@ -73,7 +56,7 @@ public class App {
         String opcao = scanner.nextLine();
 
         switch (opcao) {
-            case "1":
+            case "1" -> {
                 System.out.println("Nome:");
                 String nome = scanner.nextLine();
                 System.out.println("Telefone:");
@@ -89,7 +72,7 @@ public class App {
                 System.out.println("Forma de pagamento [1] Pix [2] Cartão:");
                 String forma = scanner.nextLine();
 
-                MetodoPagamento metodo = null;
+                MetodoPagamento metodo;
                 if (forma.equals("1")) {
                     System.out.println("Chave Pix:");
                     String chavePix = scanner.nextLine();
@@ -109,8 +92,9 @@ public class App {
                 Cliente cliente = new Cliente(nome, telefone, email, endereco, idade, cpf, metodo);
                 clientes.add(cliente);
                 System.out.println("Cliente cadastrado com sucesso!");
-                break;
-            case "2":
+            }
+
+            case "2" -> {
                 System.out.println("Nome:");
                 String enome = scanner.nextLine();
                 System.out.println("Telefone:");
@@ -138,8 +122,9 @@ public class App {
                         cnh, seguro, conta);
                 entregadores.add(entregador);
                 System.out.println("Entregador cadastrado com sucesso!");
-                break;
-            case "3":
+            }
+
+            case "3" -> {
                 System.out.println("Nome:");
                 String estNome = scanner.nextLine();
                 System.out.println("CNPJ:");
@@ -150,14 +135,12 @@ public class App {
                 Estabelecimento est = new Estabelecimento(estNome, cnpj, categoria);
                 estabelecimentos.add(est);
                 System.out.println("Estabelecimento cadastrado com sucesso!");
-                break;
-            case "4":
-                return;
-            case "5":
-                System.exit(0);
-                break;
-            default:
-                System.out.println("Opção inválida.");
+            }
+
+            case "4" -> {
+            }
+            case "5" -> System.exit(0);
+            default -> System.out.println("Opção inválida.");
         }
     }
 
@@ -189,7 +172,6 @@ public class App {
 
     static void menuCliente(Cliente cliente) {
         boolean ativo = true;
-
         while (ativo) {
             System.out.println("===== Cliente: " + cliente.getNome() + " =====");
             System.out.println("[1] Fazer Pedido");
@@ -201,10 +183,8 @@ public class App {
             String opcao = scanner.nextLine();
 
             switch (opcao) {
-                case "1":
-                    System.out.println("🚧 Fazer pedido ainda será implementado...");
-                    break;
-                case "2":
+                case "1" -> fazerPedido(cliente);
+                case "2" -> {
                     List<Pedido> pedidos = cliente.getPedidos();
                     if (pedidos.isEmpty()) {
                         System.out.println("Nenhum pedido encontrado.");
@@ -215,19 +195,64 @@ public class App {
                                     "[" + (i + 1) + "] Pedido ID: " + p.getId() + ", Total: R$" + p.getValorTotal());
                         }
                     }
-                    break;
-                case "3":
-                    System.out.println("🚧 Atualizar/Deletar ainda será implementado...");
-                    break;
-                case "4":
-                    ativo = false;
-                    break;
-                case "5":
-                    System.exit(0);
-                    break;
-                default:
-                    System.out.println("Opção inválida.");
+                }
+                case "3" -> System.out.println("🚧 Atualizar/Deletar ainda será implementado...");
+                case "4" -> ativo = false;
+                case "5" -> System.exit(0);
+                default -> System.out.println("Opção inválida.");
             }
+        }
+    }
+
+    static void fazerPedido(Cliente cliente) {
+        if (estabelecimentos.isEmpty()) {
+            System.out.println("Nenhum estabelecimento disponível.");
+            return;
+        }
+
+        System.out.println("===== Estabelecimentos =====");
+        for (int i = 0; i < estabelecimentos.size(); i++) {
+            Estabelecimento est = estabelecimentos.get(i);
+            System.out.println("[" + (i + 1) + "] " + est.getNome() + " - Categoria: " + est.getCategoria());
+        }
+        System.out.println("Escolha o estabelecimento:");
+        int escolhaEst = Integer.parseInt(scanner.nextLine());
+        Estabelecimento est = estabelecimentos.get(escolhaEst - 1);
+
+        int idItem = 1;
+        boolean adicionando = true;
+        List<ItemPedido> itens = new ArrayList<>();
+
+        while (adicionando) {
+            System.out.println("Nome do item:");
+            String nomeItem = scanner.nextLine();
+            System.out.println("Quantidade:");
+            int quantidade = Integer.parseInt(scanner.nextLine());
+            System.out.println("Preço:");
+            float preco = Float.parseFloat(scanner.nextLine());
+
+            ItemPedido item = new ItemPedido(idItem++, nomeItem, quantidade, preco);
+            itens.add(item);
+
+            System.out.println("Adicionar outro item? (s/n)");
+            String continuar = scanner.nextLine();
+            if (!continuar.equalsIgnoreCase("s")) {
+                adicionando = false;
+            }
+        }
+
+        Pedido pedido = cliente.fazerPedido(itens, est);
+        boolean pago = pedido.processarPagamento(cliente.getFormaDePagamento());
+
+        if (pago) {
+            pedido.atualizarStatus("Pago");
+            System.out.println("Pedido criado com sucesso!");
+            System.out.println("Cliente: " + cliente.getNome());
+            System.out.println("Valor Total: R$" + pedido.getValorTotal());
+            System.out.println("Status do Pedido: " + pedido.getStatus());
+            System.out.println("Pagamento realizado? Sim");
+        } else {
+            System.out.println("Pagamento falhou. Pedido não confirmado.");
         }
     }
 
